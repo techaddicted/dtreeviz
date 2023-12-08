@@ -409,6 +409,49 @@ class DTreeVizAPI:
                     """
 
         def instance_html(path, instance_fontsize: int = 11):
+            classes = [
+                "Depth_Gauge_for_2",
+                "Handle_for_Guide_Block",
+                "Handle_for_Torque_Limiter",
+                "Handle_with_Mini_Quick_Coupling",
+                "Handle_with_Quick_Coupling",
+                "Quick_Connect_Handle",
+                "Screwdriver_Large",
+                "Tap_Large",
+                "Tap_Small",
+                "Wrench",
+                "Depth_Gauge_for_2-Body",
+                "Depth_Gauge_for_2-Handle",
+                "Depth_Gauge_for_2-Shank",
+                "Handle_for_Guide_Block-Connector",
+                "Handle_for_Guide_Block-Handle",
+                "Handle_for_Torque_Limiter-Bolt",
+                "Handle_for_Torque_Limiter-Handle",
+                "Handle_with_Mini_Quick_Coupling-Coupling",
+                "Handle_with_Mini_Quick_Coupling-Handle",
+                "Handle_with_Quick_Coupling-Handle",
+                "Handle_with_Quick_Coupling-Quick-Coupling",
+                "Quick_Connect_Handle-Handle",
+                "Quick_Connect_Handle-Quick_Connect",
+                "Screwdriver_Large-Handle",
+                "Screwdriver_Large-Shank",
+                "Tap_Large-Handle",
+                "Tap_Large-Shank",
+                "Tap_Small-Handle",
+                "Tap_Small-Shank",
+                "Wrench-Connector",
+                "Wrench-Handle",
+                "Wrench-Middle_Piece",
+                "Black",
+                "Blue",
+                "Grey",
+                "Red",
+                "Silver",
+                "Steel",
+                "White",
+                "Yellow",
+                "None",
+            ]
             headers = []
             features_used = [node.feature() for node in path[:-1]]  # don't include leaf
             display_X = x
@@ -418,7 +461,7 @@ class DTreeVizAPI:
                     (orientation == 'LR' and len(x) > max_X_features_LR):
                 # squash all features down to just those used
                 display_X = [x[i] for i in features_used] + ['...']
-                display_feature_names = [node.feature_name() for node in path[:-1]] + ['...']
+                display_feature_names = [node.feature_name() for node in path[:-1]] # + ['...']
                 highlight_feature_indexes = range(0, len(features_used))
 
             for i, name in enumerate(display_feature_names):
@@ -426,7 +469,7 @@ class DTreeVizAPI:
                     color = colors['highlight']
                 else:
                     color = colors['text']
-                headers.append(f'<td cellpadding="1" align="right" bgcolor="white">'
+                headers.append(f'<td cellpadding="1" align="center" bgcolor="white">'
                                f'<font face="{fontname}" color="{color}" point-size="{instance_fontsize}">'
                                f'{name}'
                                '</font>'
@@ -442,19 +485,19 @@ class DTreeVizAPI:
                     disp_v = v
                 else:
                     disp_v = myround(v, precision)
-                values.append(f'<td cellpadding="1" align="right" bgcolor="white">'
-                              f'<font face="{fontname}" color="{color}" point-size="{instance_fontsize}">{disp_v}</font>'
+                values.append(f'<td cellpadding="1" align="center" bgcolor="white">'
+                              f'<font face="{fontname}" color="{color}" point-size="{instance_fontsize}">{classes[disp_v]}</font>'
                               '</td>')
 
             if instance_orientation == "TD":
-                html_output = """<table border="0" cellspacing="0" cellpadding="0">"""
+                html_output = """<table border="0" cellspacing="5" cellpadding="0">"""
                 for header, value in zip(headers, values):
                     html_output += f"<tr> {header} {value} </tr>"
                 html_output += "</table>"
                 return html_output
             else:
                 return f"""
-                        <table border="0" cellspacing="0" cellpadding="0">
+                        <table border="0" cellspacing="5" cellpadding="0">
                         <tr>
                             {''.join(headers)}
                         </tr>
