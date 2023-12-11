@@ -666,23 +666,21 @@ class DTreeVizAPI:
                 lcolor = colors.get('larrow', colors['arrow'])
                 rcolor = colors.get('rarrow', colors['arrow'])
 
-            logging.debug("aaa %s" % node.feature_name())
-
             lpw = rpw = "0.3"
             if node.left.id in highlight_path:
                 if x is not None:
                     for index, element in x.items():
                         if index == node.feature_name():
                             llabel = classes[element]
-                            logging.debug("x element %s" % llabel)
+                            llabel = llabel + "     "
                 lcolor = colors['highlight']
                 lpw = "1.2"
             if node.right.id in highlight_path:
                 if x is not None:
                     for index, element in x.items():
                         if index == node.feature_name():
-                            llabel = classes[element]
-                            logging.debug("x element %s" % llabel)
+                            rlabel = classes[element]
+                            rlabel = rlabel + "     "
                 rcolor = colors['highlight']
                 rpw = "1.2"
 
