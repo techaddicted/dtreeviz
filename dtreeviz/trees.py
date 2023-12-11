@@ -1,4 +1,5 @@
 import os
+import logging
 import tempfile
 from typing import Mapping, List, Callable
 
@@ -29,6 +30,7 @@ NUM_BINS = [
     5, 5, 5, 5, 5,
 ]  # support for 40 classes
 
+logging.basicConfig(filename='/Users/janstodt/Git/phd-lasttopic/example.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class DTreeVizAPI:
     """
@@ -629,7 +631,7 @@ class DTreeVizAPI:
             show_root_edge_labels = False
 
         # TODO do we need show_edge_labels ?
-        show_edge_labels = False
+        show_edge_labels = True
         all_llabel = '  &lt;' if show_edge_labels else ''
         all_rlabel = '  &ge;' if show_edge_labels else ''
         root_llabel = f'  {self.shadow_tree.get_root_edge_labels()[0]}' if show_root_edge_labels else ''
@@ -664,22 +666,52 @@ class DTreeVizAPI:
                 lcolor = colors.get('larrow', colors['arrow'])
                 rcolor = colors.get('rarrow', colors['arrow'])
 
+            logging.debug("aaa %s" % node.feature_name())
+
             lpw = rpw = "0.3"
             if node.left.id in highlight_path:
+                if x is not None:
+                    for index, element in x.items():
+                        if index == node.feature_name():
+                            llabel = classes[element]
+                            logging.debug("x element %s" % llabel)
                 lcolor = colors['highlight']
                 lpw = "1.2"
             if node.right.id in highlight_path:
+                if x is not None:
+                    for index, element in x.items():
+                        if index == node.feature_name():
+                            llabel = classes[element]
+                            logging.debug("x element %s" % llabel)
                 rcolor = colors['highlight']
                 rpw = "1.2"
 
             if show_just_path:
                 if node.left.id in highlight_path:
-                    edges.append(f'{nname} -> {left_node_name} [penwidth={lpw} fontname="{fontname}" color="{lcolor}" label=<{llabel}> fontcolor="{colors["text"]}"]')
+                    edges.append(f'{nname} -> {left_node_name} [penwidth={lpw} fontname="{fontname}" fontsize={title_fontsize} color="{lcolor}" label=<{llabel}> fontcolor="{colors["text"]}"]')
                 if node.right.id in highlight_path:
-                    edges.append(f'{nname} -> {right_node_name} [penwidth={rpw} fontname="{fontname}" color="{rcolor}" label=<{rlabel}> fontcolor="{colors["text"]}"]')
+                    edges.append(f'{nname} -> {right_node_name} [penwidth={rpw} fontname="{fontname}" fontsize={title_fontsize} color="{rcolor}" label=<{rlabel}> fontcolor="{colors["text"]}"]')
+
+            elif classes:
+                if node.left.id in highlight_path:
+                    left_color = colors["highlight"]
+                else:
+                    left_color = colors["text"]
+                if node.right.id in highlight_path:
+                    right_color = colors["highlight"]
+                else:
+                    right_color = colors["text"]
+                edges.append(f'{nname} -> {left_node_name} [penwidth={lpw} fontname="{fontname}" fontsize={title_fontsize} color="{lcolor}" label=<{llabel}> fontcolor="{left_color}"]')
+                edges.append(f'{nname} -> {right_node_name} [penwidth={rpw} fontname="{fontname}" fontsize={title_fontsize} color="{rcolor}" label=<{rlabel}> fontcolor="{right_color}"]')
+                edges.append(f"""
+                    {{
+                        rank=same;
+                        {left_node_name} -> {right_node_name} [style=invis]
+                    }}
+                    """)
             else:
-                edges.append(f'{nname} -> {left_node_name} [penwidth={lpw} fontname="{fontname}" color="{lcolor}" label=<{llabel}> fontcolor="{colors["text"]}"]')
-                edges.append(f'{nname} -> {right_node_name} [penwidth={rpw} fontname="{fontname}" color="{rcolor}" label=<{rlabel}> fontcolor="{colors["text"]}"]')
+                edges.append(f'{nname} -> {left_node_name} [penwidth={lpw} fontname="{fontname}" fontsize={title_fontsize} color="{lcolor}" label=<{llabel}> fontcolor="{colors["text"]}"]')
+                edges.append(f'{nname} -> {right_node_name} [penwidth={rpw} fontname="{fontname}" fontsize={title_fontsize} color="{rcolor}" label=<{rlabel}> fontcolor="{colors["text"]}"]')
                 edges.append(f"""
                     {{
                         rank=same;
