@@ -1,5 +1,4 @@
 import os
-import logging
 import tempfile
 from typing import Mapping, List, Callable
 
