@@ -39,6 +39,10 @@ class DTreeVizAPI:
     def __init__(self, shahdow_tree: ShadowDecTree):
         self.shadow_tree = shahdow_tree
 
+    def prediction(self, x):
+        path = self.shadow_tree.predict_path(x)
+        return path[-1].prediction_name()
+
     def leaf_sizes(self,
                    display_type: str = "plot",
                    colors: dict = None,
@@ -534,6 +538,7 @@ class DTreeVizAPI:
         if self.shadow_tree.is_classifier():
             class_values = self.shadow_tree.classes()
             if np.max(class_values) >= n_classes:
+                print(class_values, n_classes)
                 raise ValueError(f"Target label values (for now) must be 0..{n_classes - 1} for n={n_classes} labels")
             color_map = {v: color_values[i] for i, v in enumerate(class_values)}
             _draw_legend(self.shadow_tree, self.shadow_tree.target_name, os.path.join(tmp, f"legend_{os.getpid()}.svg"),
@@ -668,16 +673,24 @@ class DTreeVizAPI:
                 if x is not None:
                     for index, element in x.items():
                         if index == node.feature_name():
-                            llabel = classes[element]
-                            llabel = llabel
+                            if classes is not None:
+                                llabel = classes[element]
+                                llabel = llabel
+                            else:
+                                llabel = element
+                                llabel = llabel
                 lcolor = colors['highlight']
                 lpw = "1.2"
             if node.right.id in highlight_path:
                 if x is not None:
                     for index, element in x.items():
                         if index == node.feature_name():
-                            rlabel = classes[element]
-                            rlabel = rlabel
+                            if classes is not None:
+                                rlabel = classes[element]
+                                rlabel = rlabel
+                            else:
+                                rlabel = element
+                                rlabel = rlabel
                 rcolor = colors['highlight']
                 rpw = "1.2"
 
